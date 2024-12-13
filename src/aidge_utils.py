@@ -10,8 +10,42 @@ Created on 24 June 2024
 ##########################################################
 
 import os
+import sys
+from subprocess import check_output  #  check_call
+from importlib import import_module
+from importlib.util import find_spec
 import json
 
+##########################################################
+
+#import a package or module, installing it if necessary
+def require(module_str, package_name=None, source=None):
+
+  if package_name is None:
+    package_name = module_str.partition('.')[0]
+  #if the package is not installed...
+  if find_spec(package_name) is None:
+    print(f"Installing {package_name}...")
+    #install it using !pip install
+    if source is None:
+      source = package_name
+    log = check_output([sys.executable, '-m', 'pip', 'install', source, '--progress-bar=raw'])
+    print(log.decode('ascii'))
+
+  #if the package was not correctly installed... (or the name does not correspond to the source)
+  if find_spec(package_name) is None:
+    print(f"[ERROR] the package {package_name} is not defined.")  
+
+  #otherwise, import module
+  else:
+
+    module = import_module(module_str)
+  
+    if module is None:
+      print(f"[ERROR] the module {module_str} could not be correctly imported.")  
+
+    return module
+    
 ##########################################################
 
 #PRINT AIDGE GRAPH TO TEXT (from node)
