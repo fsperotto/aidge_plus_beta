@@ -185,7 +185,6 @@ for input_data in input_data_list:
         f.write(
 f"""
 #include "dnn.h"
-#include <dnn.hpp>
 
 static const float inputs[{len(input_data_list)}][{input_size}] __attribute__((section(".nn_data"))) = {str(input_data_list).replace('[','{').replace(']','}')};
 
@@ -300,7 +299,7 @@ end:
         f.write(f"""
 #include <iostream>
 #include <time.h>
-#include "dnn.hpp"
+#include "dnn.h"
 #include "inputs.h"
 
 //------------------------------------------------------------------------
