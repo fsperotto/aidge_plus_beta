@@ -117,11 +117,15 @@ def freeze_producers(model):
        
 def fix_export(model, export_folder, 
                input_size=5, output_size=5,
+	       input_name='input",
                c_type_name="float",
                ctypes_type_name="c_float",
                np_type_name="np.float32",
                input_data_list=[[0,0,0,1,2], [1,2,3,4,5]]):
 
+    #--------------------------------------------------------------
+    # create RUN.PY
+		       
     filename = 'run.py'
     with open(os.path.join(export_folder, filename), 'w') as f:
         f.write(
@@ -180,6 +184,10 @@ for input_data in input_data_list:
 """
         )
 
+		       
+    #--------------------------------------------------------------
+    # create DNN.CPP    (for lib)
+		       
     filename = 'dnn.cpp'
     with open(os.path.join(export_folder, filename), 'w') as f:
         f.write(
@@ -194,6 +202,10 @@ void forward(const {c_type_name}* input, {c_type_name}* result){{
 """
         )
 
+
+    #--------------------------------------------------------------
+    # create DNN.H    (for lib)
+		       
     filename = 'dnn.h'
     with open(os.path.join(export_folder, filename), 'w') as f:
         f.write(
@@ -215,6 +227,9 @@ extern "C" {{
 """
         )
 
+    #--------------------------------------------------------------
+    # change MAKEFILE
+		       
     filename = 'Makefile'
     with open(os.path.join(export_folder, filename), 'w') as f:
         f.write(
@@ -293,13 +308,17 @@ end:
 -include $(DEPENDENCIES)
 """
         )
-        
+
+    #--------------------------------------------------------------
+    # change MAIN.CPP
+		       
     filename = 'main.cpp'
     with open(os.path.join(export_folder, filename), 'w') as f:
         f.write(f"""
 #include <iostream>
 #include <time.h>
-#include "dnn.h"
+//#include "dnn.h"
+#include "forward.hpp"
 #include "inputs.h"
 
 //------------------------------------------------------------------------
@@ -309,6 +328,8 @@ int main(void) {{
     const unsigned int output_size = {output_size};
     const unsigned int input_list_size = {len(input_data_list)};
 
+    // Initialize the output arrays
+    //{c_type_name} results = nullptr;
     {c_type_name} results[output_size];
 
     //for execution time
@@ -320,16 +341,19 @@ int main(void) {{
         //get forward starting time
         t = clock();
 
-        //call DNN forward
+        // Call the DNN forward function
         model_forward(inputs[i], results);
+    	//model_forward(&results);
 
         //calculate forward execution elapsed time
         t = clock() - t;
         exec_time = ((double)t)/(CLOCKS_PER_SEC/1000);
-        
-        //print result
+
+        // Print the results of each output
+	printf("outputs:\n");
         for (unsigned int j = 0; j < output_size; ++j) {{
             std::cout << j << ": " << results[j] << std::endl;
+            //printf("%f ", results[j]);
         }}
         std::cout << "wall execution time:" << exec_time << "ms" << std::endl;
         std::cout << "---------------" << std::endl;
@@ -341,7 +365,11 @@ int main(void) {{
 }}
 """
         )
-    
+
+		       
+    #--------------------------------------------------------------
+    # create INPUTS.H   in place of {input_name}.h
+		       
     filename = 'inputs.h'
     with open(os.path.join(export_folder, filename), 'w') as f:
         f.write(f"""
@@ -354,3 +382,6 @@ static const {c_type_name} inputs[{len(input_data_list)}][{input_size}] __attrib
     filename = 'inputs.json'
     with open(os.path.join(export_folder, filename), 'w') as f:
         f.write(json.dumps(input_data_list))
+
+
+
