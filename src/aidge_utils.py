@@ -116,7 +116,7 @@ def freeze_producers(model):
 ##################################################################################################
        
 def fix_export(model, export_folder, 
-               input_dim=[5], output_dim=[5],
+               input_size=5, output_size=5,
 	           input_name="input",
                c_type_name="float",
                ctypes_type_name="c_float",
