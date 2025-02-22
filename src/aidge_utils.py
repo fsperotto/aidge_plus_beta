@@ -116,8 +116,8 @@ def freeze_producers(model):
 ##################################################################################################
        
 def fix_export(model, export_folder, 
-               input_size=5, output_size=5,
-	       input_name="input",
+               input_dim=[5], output_dim=[5],
+	           input_name="input",
                c_type_name="float",
                ctypes_type_name="c_float",
                np_type_name="np.float32",
@@ -193,14 +193,15 @@ for input_data in input_data_list:
         f.write(
 f"""
 #include "dnn.h"
-
-static const float inputs[{len(input_data_list)}][{input_size}] __attribute__((section(".nn_data"))) = {str(input_data_list).replace('[','{').replace(']','}')};
+#include "forward.hpp"
 
 void forward(const {c_type_name}* input, {c_type_name}* result){{
 	model_forward(input, result);
 }}
 """
         )
+
+#static const float inputs[{len(input_data_list)}][{input_size}] __attribute__((section(".nn_data"))) = {str(input_data_list).replace('[','{').replace(']','}')};
 
 
     #--------------------------------------------------------------
@@ -336,21 +337,21 @@ int main(void) {{
     clock_t t;
     double exec_time;
     
-	for(unsigned int i=0;i<input_list_size;i++) {{
+    for(unsigned int i=0;i<input_list_size;i++) {{
 
         //get forward starting time
         t = clock();
 
         // Call the DNN forward function
         model_forward(inputs[i], results);
-    	//model_forward(&results);
+        //model_forward(&results);
 
         //calculate forward execution elapsed time
         t = clock() - t;
         exec_time = ((double)t)/(CLOCKS_PER_SEC/1000);
 
         // Print the results of each output
-	printf("outputs:\n");
+        printf("outputs:\\n");
         for (unsigned int j = 0; j < output_size; ++j) {{
             std::cout << j << ": " << results[j] << std::endl;
             //printf("%f ", results[j]);
