@@ -196,7 +196,7 @@ f"""
 #include "forward.hpp"
 
 void forward(const {c_type_name}* input, {c_type_name}* result){{
-	model_forward(input, result);
+	model_forward(input, &result);
 }}
 """
         )
@@ -330,8 +330,8 @@ int main(void) {{
     const unsigned int input_list_size = {len(input_data_list)};
 
     // Initialize the output arrays
-    //{c_type_name} results = nullptr;
-    {c_type_name} results[output_size];
+    {c_type_name}* results = nullptr;
+    //{c_type_name} results[output_size];
 
     //for execution time
     clock_t t;
@@ -343,7 +343,7 @@ int main(void) {{
         t = clock();
 
         // Call the DNN forward function
-        model_forward(inputs[i], results);
+        model_forward(inputs[i], &results);
         //model_forward(&results);
 
         //calculate forward execution elapsed time
