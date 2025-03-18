@@ -522,3 +522,6 @@ class DTypeConvert:
 
   def str_dtype(self):
     return self._str_dtype
+    
+  def __str__(self):
+    return f"DType('{self._str_dtype}')"
