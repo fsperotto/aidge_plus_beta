@@ -451,7 +451,7 @@ class DTypeConvert:
       
       try:
 
-        print(module.lower()) 
+        #print(module.lower()) 
         
         #NUMPY
         if module.lower() in ['numpy', 'np']:
