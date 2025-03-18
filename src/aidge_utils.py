@@ -425,83 +425,91 @@ class DTypeConvert:
                       'ubyte':int, 'ushort':int, 'uint':int, 'ulong':int,
                       'uint8':int, 'uint16':int, 'uint32':int, 'uint64':int}
 
-  try:
-    import numpy as np
-    dtypes['np'] = {'float16':np.float16, 'float32':np.float32, 'float64':np.float64, #'float128':np.float128,
-                    'half':np.half, 'single':np.single, 'float':np.float32, 'double':np.float64,
-                    'int2':np.int8, 'int3':np.int8, 'int4':np.int8, 'int5':np.int8, 'int6':np.int8, 'int7':np.int8,
-                    'int8':np.int8, 'int16':np.int16, 'int32':np.int32, 'int64':np.int64,
-                    'byte':np.byte, 'short':np.short, 'int':np.int32, 'long':np.int64,
-                    'uint2':np.uint8, 'uint3':np.uint8, 'uint4':np.uint8, 'uint5':np.uint8, 'uint6':np.uint8, 'uint7':np.uint8,
-                    'ubyte':np.ubyte, 'ushort':np.ushort, 'uint':np.uint, 'ulong':np.int64,
-                    'uint8':np.uint8, 'uint16':np.uint16, 'uint32':np.uint32, 'uint64':np.uint64}
-  except:
-    pass
-
-  try:
-    import aidge_core
-    dtypes['aidge'] = {'float16':aidge_core.dtype.float16, 'float32':aidge_core.dtype.float32, 'float64':aidge_core.dtype.float64, #'float128':aidge_core.dtype.float64,
-                       'half':aidge_core.dtype.float16, 'single':aidge_core.dtype.float32, 'float':aidge_core.dtype.float32, 'double':aidge_core.dtype.float64,
-                       'int2':aidge_core.dtype.int2, 'int3':aidge_core.dtype.int3, 'int4':aidge_core.dtype.int4, 'int5':aidge_core.dtype.int5, 'int6':aidge_core.dtype.int6, 'int7':aidge_core.dtype.int7,
-                       'int8':aidge_core.dtype.int8, 'int16':aidge_core.dtype.int16, 'int32':aidge_core.dtype.int32, 'int64':aidge_core.dtype.int64, 
-                       'byte':aidge_core.dtype.int8, 'short':aidge_core.dtype.int16, 'int':aidge_core.dtype.int32, 'long':aidge_core.dtype.int64,
-                       'uint2':aidge_core.dtype.uint2, 'uint3':aidge_core.dtype.uint3, 'uint4':aidge_core.dtype.uint4, 'uint5':aidge_core.dtype.uint5, 'uint6':aidge_core.dtype.uint6, 'uint7':aidge_core.dtype.uint7,
-                       'ubyte':aidge_core.dtype.uint8, 'ushort':aidge_core.dtype.uint16, 'uint':aidge_core.dtype.uint32, 'ulong':aidge_core.dtype.uint64,
-                       'uint8':aidge_core.dtype.uint8, 'uint16':aidge_core.dtype.uint16, 'uint32':aidge_core.dtype.uint32, 'uint64':aidge_core.dtype.uint64}
-  except:
-    pass
-
-  try:
-    import torch
-    dtypes['torch'] = {'float16':torch.float16, 'float32':torch.float32, 'float64':torch.float64, #'float128':torch.float64,
-                       'half':torch.half, 'single':torch.float, 'float':torch.float, 'double':torch.double,
-                       'int2':torch.int8, 'int3':torch.int8, 'int4':torch.int8, 'int5':torch.int8, 'int6':torch.int8, 'int7':torch.int8,
-                       'int8':torch.int8, 'int16':torch.int16, 'int32':torch.int32, 'int64':torch.int64,
-                       'byte':torch.int8, 'short':torch.short, 'int':torch.int, 'long':torch.long,
-                       'uint2':torch.uint8, 'uint3':torch.uint8, 'uint4':torch.uint8, 'uint5':torch.uint8, 'uint6':torch.uint8, 'uint7':torch.uint8,
-                       'ubyte':torch.uint8, 'ushort':torch.uint16, 'uint':torch.uint32, 'ulong':torch.uint64,
-                       'uint8':torch.uint8, 'uint16':torch.uint16, 'uint32':torch.uint32, 'uint64':torch.uint64}
-  except:
-    pass
-
-  try:
-    import tensorflow as tf
-    dtypes['tf'] = {'float16':tf.float16, 'float32':tf.float32, 'float64':tf.float64, #'float128':tf.float64,
-                    'half':tf.half, 'single':tf.float32, 'float':tf.float32, 'double':tf.double,
-                    'int2':tf.int8, 'int3':tf.int8, 'int4':tf.int8, 'int5':tf.int8, 'int6':tf.int8, 'int7':tf.int8,
-                    'int8':tf.int8, 'int16':tf.int16, 'int32':tf.int32, 'int64':tf.int64,
-                    'byte':tf.int8, 'short':tf.int16, 'int':tf.int32, 'long':tf.int64,
-                    'uint2':tf.uint8, 'uint3':tf.uint8, 'uint4':tf.uint8, 'uint5':tf.uint8, 'uint6':tf.uint8, 'uint7':tf.uint8,
-                    'ubyte':tf.uint8, 'ushort':tf.uint16, 'uint':tf.uint32, 'ulong':tf.uint64,
-                    'uint8':tf.uint8, 'uint16':tf.uint16, 'uint32':tf.uint32, 'uint64':tf.uint64}
-  except:
-    pass
-
-  try:
-    import ctypes
-    dtypes['ctypes'] = {'float16':ctypes.c_float, 'float32':ctypes.c_float, 'float64':ctypes.c_double, #'float128':ctypes.c_longdouble,
-                        'half':ctypes.c_float, 'single':ctypes.c_float, 'float':ctypes.c_float, 'double':ctypes.c_double, #'float128':ctypes.c_longdouble,
-                        'int2':ctypes.c_int8, 'int3':ctypes.c_int8, 'int4':ctypes.c_int8, 'int5':ctypes.c_int8, 'int6':ctypes.c_int8, 'int7':ctypes.c_int8,
-                        'int8':ctypes.c_int8, 'int16':ctypes.c_int16, 'int32':ctypes.c_int32, 'int64':ctypes.c_int64,
-                        'byte':ctypes.c_byte, 'short':ctypes.c_short, 'int':ctypes.c_int, 'long':ctypes.c_long,
-                        'uint2':ctypes.c_uint8, 'uint3':ctypes.c_uint8, 'uint4':ctypes.c_uint8, 'uint5':ctypes.c_uint8, 'uint6':ctypes.c_uint8, 'uint7':ctypes.c_uint8,
-                        'ubyte':ctypes.c_ubyte, 'ushort':ctypes.c_ushort, 'uint':ctypes.c_uint, 'ulong':ctypes.c_ulong,
-                        'uint8':ctypes.c_uint8, 'uint16':ctypes.c_uint16, 'uint32':ctypes.c_uint32, 'uint64':ctypes.c_uint64}
-  except:
-    pass
-
   def __init__(self, str_dtype='float32'):
+
     if str_dtype in self.valid_types:
+
+      #set the datatype
       self._str_dtype = str_dtype
+
+      #update convertible datatype modules
+      try:
+        import numpy as np
+        dtypes['np'] = {'float16':np.float16, 'float32':np.float32, 'float64':np.float64, #'float128':np.float128,
+                        'half':np.half, 'single':np.single, 'float':np.float32, 'double':np.float64,
+                        'int2':np.int8, 'int3':np.int8, 'int4':np.int8, 'int5':np.int8, 'int6':np.int8, 'int7':np.int8,
+                        'int8':np.int8, 'int16':np.int16, 'int32':np.int32, 'int64':np.int64,
+                        'byte':np.byte, 'short':np.short, 'int':np.int32, 'long':np.int64,
+                        'uint2':np.uint8, 'uint3':np.uint8, 'uint4':np.uint8, 'uint5':np.uint8, 'uint6':np.uint8, 'uint7':np.uint8,
+                        'ubyte':np.ubyte, 'ushort':np.ushort, 'uint':np.uint, 'ulong':np.int64,
+                        'uint8':np.uint8, 'uint16':np.uint16, 'uint32':np.uint32, 'uint64':np.uint64}
+      except:
+        pass
+
+      try:
+        import aidge_core
+        dtypes['aidge'] = {'float16':aidge_core.dtype.float16, 'float32':aidge_core.dtype.float32, 'float64':aidge_core.dtype.float64, #'float128':aidge_core.dtype.float64,
+                           'half':aidge_core.dtype.float16, 'single':aidge_core.dtype.float32, 'float':aidge_core.dtype.float32, 'double':aidge_core.dtype.float64,
+                           'int2':aidge_core.dtype.int2, 'int3':aidge_core.dtype.int3, 'int4':aidge_core.dtype.int4, 'int5':aidge_core.dtype.int5, 'int6':aidge_core.dtype.int6, 'int7':aidge_core.dtype.int7,
+                           'int8':aidge_core.dtype.int8, 'int16':aidge_core.dtype.int16, 'int32':aidge_core.dtype.int32, 'int64':aidge_core.dtype.int64, 
+                           'byte':aidge_core.dtype.int8, 'short':aidge_core.dtype.int16, 'int':aidge_core.dtype.int32, 'long':aidge_core.dtype.int64,
+                           'uint2':aidge_core.dtype.uint2, 'uint3':aidge_core.dtype.uint3, 'uint4':aidge_core.dtype.uint4, 'uint5':aidge_core.dtype.uint5, 'uint6':aidge_core.dtype.uint6, 'uint7':aidge_core.dtype.uint7,
+                           'ubyte':aidge_core.dtype.uint8, 'ushort':aidge_core.dtype.uint16, 'uint':aidge_core.dtype.uint32, 'ulong':aidge_core.dtype.uint64,
+                           'uint8':aidge_core.dtype.uint8, 'uint16':aidge_core.dtype.uint16, 'uint32':aidge_core.dtype.uint32, 'uint64':aidge_core.dtype.uint64}
+      except:
+        pass
+
+      try:
+        import torch
+        dtypes['torch'] = {'float16':torch.float16, 'float32':torch.float32, 'float64':torch.float64, #'float128':torch.float64,
+                           'half':torch.half, 'single':torch.float, 'float':torch.float, 'double':torch.double,
+                           'int2':torch.int8, 'int3':torch.int8, 'int4':torch.int8, 'int5':torch.int8, 'int6':torch.int8, 'int7':torch.int8,
+                           'int8':torch.int8, 'int16':torch.int16, 'int32':torch.int32, 'int64':torch.int64,
+                           'byte':torch.int8, 'short':torch.short, 'int':torch.int, 'long':torch.long,
+                           'uint2':torch.uint8, 'uint3':torch.uint8, 'uint4':torch.uint8, 'uint5':torch.uint8, 'uint6':torch.uint8, 'uint7':torch.uint8,
+                           'ubyte':torch.uint8, 'ushort':torch.uint16, 'uint':torch.uint32, 'ulong':torch.uint64,
+                           'uint8':torch.uint8, 'uint16':torch.uint16, 'uint32':torch.uint32, 'uint64':torch.uint64}
+      except:
+        pass
+
+      try:
+        import tensorflow as tf
+        dtypes['tf'] = {'float16':tf.float16, 'float32':tf.float32, 'float64':tf.float64, #'float128':tf.float64,
+                        'half':tf.half, 'single':tf.float32, 'float':tf.float32, 'double':tf.double,
+                        'int2':tf.int8, 'int3':tf.int8, 'int4':tf.int8, 'int5':tf.int8, 'int6':tf.int8, 'int7':tf.int8,
+                        'int8':tf.int8, 'int16':tf.int16, 'int32':tf.int32, 'int64':tf.int64,
+                        'byte':tf.int8, 'short':tf.int16, 'int':tf.int32, 'long':tf.int64,
+                        'uint2':tf.uint8, 'uint3':tf.uint8, 'uint4':tf.uint8, 'uint5':tf.uint8, 'uint6':tf.uint8, 'uint7':tf.uint8,
+                        'ubyte':tf.uint8, 'ushort':tf.uint16, 'uint':tf.uint32, 'ulong':tf.uint64,
+                        'uint8':tf.uint8, 'uint16':tf.uint16, 'uint32':tf.uint32, 'uint64':tf.uint64}
+      except:
+        pass
+
+      try:
+        import ctypes
+        dtypes['ctypes'] = {'float16':ctypes.c_float, 'float32':ctypes.c_float, 'float64':ctypes.c_double, #'float128':ctypes.c_longdouble,
+                            'half':ctypes.c_float, 'single':ctypes.c_float, 'float':ctypes.c_float, 'double':ctypes.c_double, #'float128':ctypes.c_longdouble,
+                            'int2':ctypes.c_int8, 'int3':ctypes.c_int8, 'int4':ctypes.c_int8, 'int5':ctypes.c_int8, 'int6':ctypes.c_int8, 'int7':ctypes.c_int8,
+                            'int8':ctypes.c_int8, 'int16':ctypes.c_int16, 'int32':ctypes.c_int32, 'int64':ctypes.c_int64,
+                            'byte':ctypes.c_byte, 'short':ctypes.c_short, 'int':ctypes.c_int, 'long':ctypes.c_long,
+                            'uint2':ctypes.c_uint8, 'uint3':ctypes.c_uint8, 'uint4':ctypes.c_uint8, 'uint5':ctypes.c_uint8, 'uint6':ctypes.c_uint8, 'uint7':ctypes.c_uint8,
+                            'ubyte':ctypes.c_ubyte, 'ushort':ctypes.c_ushort, 'uint':ctypes.c_uint, 'ulong':ctypes.c_ulong,
+                            'uint8':ctypes.c_uint8, 'uint16':ctypes.c_uint16, 'uint32':ctypes.c_uint32, 'uint64':ctypes.c_uint64}
+      except:
+        pass
+
     else:
+
       print(f'Unknown or unsupported dtype "{str_dtype}". Using "float32".')
       self._str_dtype = 'float32'
+
 
   def dtype(self, module=None):
     if module is not None:
       return self.dtypes[module][self._str_dtype]
     else:
       return self.str_dtype()
+
 
   def str_dtype(self):
     return self._str_dtype
