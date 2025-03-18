@@ -436,7 +436,7 @@ class DTypeConvert:
       return self.str_dtype()
     
     #PYTHON TYPE
-    elif module.lower in ['python', 'py']:
+    elif module.lower() in ['python', 'py']:
       return {'float16':float, 'float32':float, 'float64':float, #'float128':float,
               'half':float, 'single':float, 'float':float, 'double':float,
               'int2':int, 'int3':int, 'int4':int, 'int5':int, 'int6':int, 'int7':int,
@@ -451,8 +451,10 @@ class DTypeConvert:
       
       try:
 
+        print(module.lower()) 
+        
         #NUMPY
-        if module.lower in ['numpy', 'np']:
+        if module.lower() in ['numpy', 'np']:
           import numpy as np
           return {'float16':np.float16, 'float32':np.float32, 'float64':np.float64, #'float128':np.float128,
                   'half':np.half, 'single':np.single, 'float':np.float32, 'double':np.float64,
@@ -464,7 +466,7 @@ class DTypeConvert:
                   'uint8':np.uint8, 'uint16':np.uint16, 'uint32':np.uint32, 'uint64':np.uint64}[self._str_dtype]
         
         #AIDGE
-        elif module.lower in ['aidge']:
+        elif module.lower() in ['aidge']:
           import aidge_core
           return {'float16':aidge_core.dtype.float16, 'float32':aidge_core.dtype.float32, 'float64':aidge_core.dtype.float64, #'float128':aidge_core.dtype.float64,
                   'half':aidge_core.dtype.float16, 'single':aidge_core.dtype.float32, 'float':aidge_core.dtype.float32, 'double':aidge_core.dtype.float64,
@@ -476,7 +478,7 @@ class DTypeConvert:
                   'uint8':aidge_core.dtype.uint8, 'uint16':aidge_core.dtype.uint16, 'uint32':aidge_core.dtype.uint32, 'uint64':aidge_core.dtype.uint64}[self._str_dtype]
 
         #TORCH
-        elif module.lower in ['torch', 'pytorch', 'pt']:
+        elif module.lower() in ['torch', 'pytorch', 'pt']:
           import torch
           return {'float16':torch.float16, 'float32':torch.float32, 'float64':torch.float64, #'float128':torch.float64,
                   'half':torch.half, 'single':torch.float, 'float':torch.float, 'double':torch.double,
@@ -488,7 +490,7 @@ class DTypeConvert:
                   'uint8':torch.uint8, 'uint16':torch.uint16, 'uint32':torch.uint32, 'uint64':torch.uint64}[self._str_dtype]
   
         #TF
-        elif module.lower in ['ft', 'tensorflow']:
+        elif module.lower() in ['ft', 'tensorflow']:
           import tensorflow as tf
           return {'float16':tf.float16, 'float32':tf.float32, 'float64':tf.float64, #'float128':tf.float64,
                         'half':tf.half, 'single':tf.float32, 'float':tf.float32, 'double':tf.double,
@@ -500,7 +502,7 @@ class DTypeConvert:
                         'uint8':tf.uint8, 'uint16':tf.uint16, 'uint32':tf.uint32, 'uint64':tf.uint64}[self._str_dtype]
   
         #C_TYPES
-        elif module.lower in ['ctypes', 'c-types', 'c_types']:
+        elif module.lower() in ['ctypes', 'c-types', 'c_types']:
           import ctypes
           return {'float16':ctypes.c_float, 'float32':ctypes.c_float, 'float64':ctypes.c_double, #'float128':ctypes.c_longdouble,
                   'half':ctypes.c_float, 'single':ctypes.c_float, 'float':ctypes.c_float, 'double':ctypes.c_double, #'float128':ctypes.c_longdouble,
