@@ -415,16 +415,6 @@ class DTypeConvert:
                  'ubyte', 'ushort', 'uint', 'ulong',
                  'uint8', 'uint16', 'uint32', 'uint64']
 
-  dtypes = dict()
-  dtypes['python'] = {'float16':float, 'float32':float, 'float64':float, #'float128':float,
-                      'half':float, 'single':float, 'float':float, 'double':float,
-                      'int2':int, 'int3':int, 'int4':int, 'int5':int, 'int6':int, 'int7':int,
-                      'int8':int, 'int16':int, 'int32':int, 'int64':int,
-                      'byte':int, 'short':int, 'int':int, 'long':int,
-                      'uint2':int, 'uint3':int, 'uint4':int, 'uint5':int, 'uint6':int, 'uint7':int,
-                      'ubyte':int, 'ushort':int, 'uint':int, 'ulong':int,
-                      'uint8':int, 'uint16':int, 'uint32':int, 'uint64':int}
-
   def __init__(self, str_dtype='float32'):
 
     if str_dtype in self.valid_types:
@@ -432,10 +422,20 @@ class DTypeConvert:
       #set the datatype
       self._str_dtype = str_dtype
 
-      #update convertible datatype modules
+      #convertible datatype modules
+      self.dtypes = dict()
+      self.dtypes['python'] = {'float16':float, 'float32':float, 'float64':float, #'float128':float,
+                          'half':float, 'single':float, 'float':float, 'double':float,
+                          'int2':int, 'int3':int, 'int4':int, 'int5':int, 'int6':int, 'int7':int,
+                          'int8':int, 'int16':int, 'int32':int, 'int64':int,
+                          'byte':int, 'short':int, 'int':int, 'long':int,
+                          'uint2':int, 'uint3':int, 'uint4':int, 'uint5':int, 'uint6':int, 'uint7':int,
+                          'ubyte':int, 'ushort':int, 'uint':int, 'ulong':int,
+                          'uint8':int, 'uint16':int, 'uint32':int, 'uint64':int}
+
       try:
         import numpy as np
-        dtypes['np'] = {'float16':np.float16, 'float32':np.float32, 'float64':np.float64, #'float128':np.float128,
+        self.dtypes['np'] = {'float16':np.float16, 'float32':np.float32, 'float64':np.float64, #'float128':np.float128,
                         'half':np.half, 'single':np.single, 'float':np.float32, 'double':np.float64,
                         'int2':np.int8, 'int3':np.int8, 'int4':np.int8, 'int5':np.int8, 'int6':np.int8, 'int7':np.int8,
                         'int8':np.int8, 'int16':np.int16, 'int32':np.int32, 'int64':np.int64,
@@ -448,7 +448,7 @@ class DTypeConvert:
 
       try:
         import aidge_core
-        dtypes['aidge'] = {'float16':aidge_core.dtype.float16, 'float32':aidge_core.dtype.float32, 'float64':aidge_core.dtype.float64, #'float128':aidge_core.dtype.float64,
+        self.dtypes['aidge'] = {'float16':aidge_core.dtype.float16, 'float32':aidge_core.dtype.float32, 'float64':aidge_core.dtype.float64, #'float128':aidge_core.dtype.float64,
                            'half':aidge_core.dtype.float16, 'single':aidge_core.dtype.float32, 'float':aidge_core.dtype.float32, 'double':aidge_core.dtype.float64,
                            'int2':aidge_core.dtype.int2, 'int3':aidge_core.dtype.int3, 'int4':aidge_core.dtype.int4, 'int5':aidge_core.dtype.int5, 'int6':aidge_core.dtype.int6, 'int7':aidge_core.dtype.int7,
                            'int8':aidge_core.dtype.int8, 'int16':aidge_core.dtype.int16, 'int32':aidge_core.dtype.int32, 'int64':aidge_core.dtype.int64, 
@@ -461,7 +461,7 @@ class DTypeConvert:
 
       try:
         import torch
-        dtypes['torch'] = {'float16':torch.float16, 'float32':torch.float32, 'float64':torch.float64, #'float128':torch.float64,
+        self.dtypes['torch'] = {'float16':torch.float16, 'float32':torch.float32, 'float64':torch.float64, #'float128':torch.float64,
                            'half':torch.half, 'single':torch.float, 'float':torch.float, 'double':torch.double,
                            'int2':torch.int8, 'int3':torch.int8, 'int4':torch.int8, 'int5':torch.int8, 'int6':torch.int8, 'int7':torch.int8,
                            'int8':torch.int8, 'int16':torch.int16, 'int32':torch.int32, 'int64':torch.int64,
@@ -474,7 +474,7 @@ class DTypeConvert:
 
       try:
         import tensorflow as tf
-        dtypes['tf'] = {'float16':tf.float16, 'float32':tf.float32, 'float64':tf.float64, #'float128':tf.float64,
+        self.dtypes['tf'] = {'float16':tf.float16, 'float32':tf.float32, 'float64':tf.float64, #'float128':tf.float64,
                         'half':tf.half, 'single':tf.float32, 'float':tf.float32, 'double':tf.double,
                         'int2':tf.int8, 'int3':tf.int8, 'int4':tf.int8, 'int5':tf.int8, 'int6':tf.int8, 'int7':tf.int8,
                         'int8':tf.int8, 'int16':tf.int16, 'int32':tf.int32, 'int64':tf.int64,
@@ -487,7 +487,7 @@ class DTypeConvert:
 
       try:
         import ctypes
-        dtypes['ctypes'] = {'float16':ctypes.c_float, 'float32':ctypes.c_float, 'float64':ctypes.c_double, #'float128':ctypes.c_longdouble,
+        self.dtypes['ctypes'] = {'float16':ctypes.c_float, 'float32':ctypes.c_float, 'float64':ctypes.c_double, #'float128':ctypes.c_longdouble,
                             'half':ctypes.c_float, 'single':ctypes.c_float, 'float':ctypes.c_float, 'double':ctypes.c_double, #'float128':ctypes.c_longdouble,
                             'int2':ctypes.c_int8, 'int3':ctypes.c_int8, 'int4':ctypes.c_int8, 'int5':ctypes.c_int8, 'int6':ctypes.c_int8, 'int7':ctypes.c_int8,
                             'int8':ctypes.c_int8, 'int16':ctypes.c_int16, 'int32':ctypes.c_int32, 'int64':ctypes.c_int64,
