@@ -84,6 +84,7 @@ def str_aidge_seq_scheduling(static_scheduling):
 
 ##################################################################################################
 
+#PRINT THE TREE OF FILES AND DIRECTORIES
 def list_files(startpath):
     str_result = ""
     for root, dirs, files in os.walk(startpath):
@@ -98,15 +99,22 @@ def list_files(startpath):
 
 ##################################################################################################
 
+#GIVEN AN AIDGE MODEL, ENSURE THAT ALL THE NODES 
 def fix_names_as_identifiers(model):
-    for node in model.get_nodes():
+    for i, node in enumerate(model.get_nodes()):
         name = node.name()
-        if not name.isidentifier():
+        #if the name is empty
+        if name == "":
+            node.set_name("NODE_"+str(i))
+        #if the name contains invalid characters (it can be a problem when exporting code)
+        elif not name.isidentifier():
+            #change invalid characters by "_"
             name = ''.join([c if c.isalnum() else "_" for c in name])
             node.set_name(name)
 
 ##################################################################################################
 
+#IT SEEMS THAT IT IS FOR EVAL MODE (WITHOUT GRADIENT)
 def freeze_producers(model):
     for node in model.get_nodes():
         if node.type() == "Producer":
@@ -114,7 +122,8 @@ def freeze_producers(model):
             node.get_operator().attr.constant = True
 
 ##################################################################################################
-       
+
+#MODIFY EXPORT FILES       
 def fix_export(model, export_folder, 
                input_size=5, output_size=5,
 	           input_name="input",
@@ -186,16 +195,16 @@ for input_data in input_data_list:
 
 		       
     #--------------------------------------------------------------
-    # create DNN.CPP    (for lib)
+    # create LIBDNN.CPP    (for lib)
 		       
-    filename = 'dnn.cpp'
+    filename = 'libdnn.cpp'
     with open(os.path.join(export_folder, filename), 'w') as f:
         f.write(
 f"""
-#include "dnn.h"
+#include "libdnn.h"
 #include "forward.hpp"
 
-void forward(const {c_type_name}* input, {c_type_name}* result){{
+void forward(const {c_type_name}* input, {c_type_name}** result){{
 	model_forward(input, &result);
 }}
 """
@@ -205,14 +214,14 @@ void forward(const {c_type_name}* input, {c_type_name}* result){{
 
 
     #--------------------------------------------------------------
-    # create DNN.H    (for lib)
+    # create LIBDNN.H    (for lib)
 		       
-    filename = 'dnn.h'
+    filename = 'libdnn.h'
     with open(os.path.join(export_folder, filename), 'w') as f:
         f.write(
 f"""
-#ifndef DNN_H
-#define DNN_H
+#ifndef LIBDNN_H
+#define LIBDNN_H
 
 #ifdef _WIN32
     #define EXPORT __declspec(dllexport)
@@ -221,10 +230,10 @@ f"""
 #endif
 
 extern "C" {{
-    EXPORT void forward(const {c_type_name}* input, {c_type_name}* result);
+    EXPORT void forward(const {c_type_name}* input, {c_type_name}** result);
 }}
 
-#endif // DNN_H
+#endif // LIBDNN_H
 """
         )
 
@@ -244,10 +253,11 @@ DNNDIR := dnn
 BINDIR := bin
 LIBDIR := lib
 
-TARGET_STANDALONE := $(BINDIR)/run_export
-TARGET_USING_LIB := $(BINDIR)/run
-TARGET_SHARED_LIB := $(LIBDIR)/libdnn.so
-LINK_OPTIONS := -L$(LIBDIR) -ldnn
+TARGET_STANDALONE_OLD := $(BINDIR)/run_old
+TARGET_STANDALONE_NEW := $(BINDIR)/run_new
+TARGET_USING_LIB      := $(BINDIR)/run_lib
+TARGET_SHARED_LIB     := $(LIBDIR)/libdnn.so
+LINK_OPTIONS          := -L$(LIBDIR) -ldnn
 
 $(info ----------------------------------)
 $(info OBJDIR is $(OBJDIR))
@@ -260,27 +270,29 @@ CC_SRCS := $(shell find $(DNNDIR) -iname "*.cpp")
 CC_OBJS := $(patsubst %.cpp, $(OBJDIR)/%.o, $(CC_SRCS))
 DEPENDENCIES := $(patsubst %.o, %.d, $(CC_OBJS))
 
-REQ_OBJS_STANDALONE := $(CC_OBJS) $(OBJDIR)/main.o
-REQ_OBJS_USING_LIB  := $(OBJDIR)/main.o
-REQ_OBJS_SHARED_LIB := $(OBJDIR)/dnn/src/forward.o $(OBJDIR)/dnn.o
+REQ_OBJS_STANDALONE_OLD := $(CC_OBJS) $(OBJDIR)/main.o
+REQ_OBJS_STANDALONE_NEW := $(CC_OBJS) $(OBJDIR)/main_new.o
+REQ_OBJS_USING_LIB  := $(OBJDIR)/main_lib.o
+REQ_OBJS_SHARED_LIB := $(OBJDIR)/dnn/src/forward.o $(OBJDIR)/libdnn.o
 
 all: build_shared_lib build_exe_using_shared_lib build_exe_standalone end
 	
 build_exe_standalone: $(REQ_OBJS_STANDALONE)
 	$(info ----------------------------------)
-	$(info Making .exe)
+	$(info Making standalone executable files)
 	@mkdir -p $(BINDIR)
-	$(CC) $(REQ_OBJS_STANDALONE) $(LDFLAGS) -o $(TARGET_STANDALONE)
+	$(CC) $(REQ_OBJS_STANDALONE_OLD) $(LDFLAGS) -o $(TARGET_STANDALONE_OLD)
+	$(CC) $(REQ_OBJS_STANDALONE_NEW) $(LDFLAGS) -o $(TARGET_STANDALONE_NEW)
 
 build_exe_using_shared_lib: $(REQ_OBJS_USING_LIB)
 	$(info ----------------------------------)
-	$(info Making run.exe using shared library dnn.so)
+	$(info Making executable file that uses shared library libdnn.so)
 	@mkdir -p $(BINDIR)
 	$(CC) $(REQ_OBJS_USING_LIB) $(LDFLAGS) -o $(TARGET_USING_LIB) $(LINK_OPTIONS)
 
 build_shared_lib: $(REQ_OBJS_SHARED_LIB)
 	$(info ----------------------------------)
-	$(info Making .so)
+	$(info Making shared library .so)
 	@mkdir -p $(LIBDIR)
 	$(CC) $(LDFLAGS) $(INCLUDE_DIRS) -fPIC -shared -o $(TARGET_SHARED_LIB) $(REQ_OBJS_SHARED_LIB)
 	
@@ -297,8 +309,9 @@ clean:
 
 end:
 	$(info ----------------------------------)
-	$(info For running the generated standalone executable:)
-	$(info > $(TARGET_STANDALONE))
+	$(info For running the generated standalone executables:)
+	$(info > $(TARGET_STANDALONE_NEW))
+	$(info > $(TARGET_STANDALONE_OLD))
 	$(info For running the generated executable that uses the shared library with dynamic link:)
 	$(info > export LD_LIBRARY_PATH=$(LIBDIR):$$LD_LIBRARY_PATH)
 	$(info > $(TARGET_USING_LIB))
@@ -311,9 +324,9 @@ end:
         )
 
     #--------------------------------------------------------------
-    # change MAIN.CPP
+    # create NEW_MAIN.CPP
 		       
-    filename = 'main.cpp'
+    filename = 'main_new.cpp'
     with open(os.path.join(export_folder, filename), 'w') as f:
         f.write(f"""
 #include <iostream>
@@ -380,6 +393,10 @@ static const {c_type_name} inputs[{len(input_data_list)}][{input_size}] __attrib
 """
         )
  
+ 
+    #--------------------------------------------------------------
+    # create INPUTS.JSON
+
     filename = 'inputs.json'
     with open(os.path.join(export_folder, filename), 'w') as f:
         f.write(json.dumps(input_data_list))
