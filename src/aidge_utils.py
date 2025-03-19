@@ -205,7 +205,7 @@ f"""
 #include "forward.hpp"
 
 void forward(const {c_type_name}* input, {c_type_name}** result){{
-	model_forward(input, &result);
+	model_forward(input, result);
 }}
 """
         )
@@ -255,7 +255,7 @@ LIBDIR := lib
 
 TARGET_STANDALONE_OLD := $(BINDIR)/run_old
 TARGET_STANDALONE_NEW := $(BINDIR)/run_new
-TARGET_USING_LIB      := $(BINDIR)/run_lib
+#TARGET_USING_LIB      := $(BINDIR)/run_lib
 TARGET_SHARED_LIB     := $(LIBDIR)/libdnn.so
 LINK_OPTIONS          := -L$(LIBDIR) -ldnn
 
@@ -272,10 +272,11 @@ DEPENDENCIES := $(patsubst %.o, %.d, $(CC_OBJS))
 
 REQ_OBJS_STANDALONE_OLD := $(CC_OBJS) $(OBJDIR)/main.o
 REQ_OBJS_STANDALONE_NEW := $(CC_OBJS) $(OBJDIR)/main_new.o
-REQ_OBJS_USING_LIB  := $(OBJDIR)/main_lib.o
+#REQ_OBJS_USING_LIB  := $(CC_OBJS) $(OBJDIR)/main_lib.o
 REQ_OBJS_SHARED_LIB := $(OBJDIR)/dnn/src/forward.o $(OBJDIR)/libdnn.o
 
-all: build_shared_lib build_exe_using_shared_lib build_exe_standalone end
+#all: build_shared_lib build_exe_using_shared_lib build_exe_standalone end
+all: build_shared_lib build_exe_standalone end
 	
 build_exe_standalone: $(REQ_OBJS_STANDALONE)
 	$(info ----------------------------------)
@@ -284,11 +285,11 @@ build_exe_standalone: $(REQ_OBJS_STANDALONE)
 	$(CC) $(REQ_OBJS_STANDALONE_OLD) $(LDFLAGS) -o $(TARGET_STANDALONE_OLD)
 	$(CC) $(REQ_OBJS_STANDALONE_NEW) $(LDFLAGS) -o $(TARGET_STANDALONE_NEW)
 
-build_exe_using_shared_lib: $(REQ_OBJS_USING_LIB)
-	$(info ----------------------------------)
-	$(info Making executable file that uses shared library libdnn.so)
-	@mkdir -p $(BINDIR)
-	$(CC) $(REQ_OBJS_USING_LIB) $(LDFLAGS) -o $(TARGET_USING_LIB) $(LINK_OPTIONS)
+#build_exe_using_shared_lib: $(REQ_OBJS_USING_LIB)
+#	$(info ----------------------------------)
+#	$(info Making executable file that uses shared library libdnn.so)
+#	@mkdir -p $(BINDIR)
+#	$(CC) $(REQ_OBJS_USING_LIB) $(LDFLAGS) -o $(TARGET_USING_LIB) $(LINK_OPTIONS)
 
 build_shared_lib: $(REQ_OBJS_SHARED_LIB)
 	$(info ----------------------------------)
