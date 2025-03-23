@@ -275,14 +275,19 @@ REQ_OBJS_STANDALONE_NEW := $(CC_OBJS) $(OBJDIR)/main_new.o
 #REQ_OBJS_USING_LIB  := $(CC_OBJS) $(OBJDIR)/main_lib.o
 REQ_OBJS_SHARED_LIB := $(OBJDIR)/dnn/src/forward.o $(OBJDIR)/libdnn.o
 
-#all: build_shared_lib build_exe_using_shared_lib build_exe_standalone end
-all: build_shared_lib build_exe_standalone end
+#all: build_shared_lib build_exe_using_shared_lib build_exe_standalone_old build_exe_standalone_new end
+all: build_shared_lib build_exe_standalone_old build_exe_standalone_new end
 	
-build_exe_standalone: $(REQ_OBJS_STANDALONE)
+build_exe_standalone_old: $(REQ_OBJS_STANDALONE_OLD)
 	$(info ----------------------------------)
-	$(info Making standalone executable files)
+	$(info Making (old) standalone executable file)
 	@mkdir -p $(BINDIR)
 	$(CC) $(REQ_OBJS_STANDALONE_OLD) $(LDFLAGS) -o $(TARGET_STANDALONE_OLD)
+
+build_exe_standalone_new: $(REQ_OBJS_STANDALONE_NEW)
+	$(info ----------------------------------)
+	$(info Making (new) standalone executable file)
+	@mkdir -p $(BINDIR)
 	$(CC) $(REQ_OBJS_STANDALONE_NEW) $(LDFLAGS) -o $(TARGET_STANDALONE_NEW)
 
 #build_exe_using_shared_lib: $(REQ_OBJS_USING_LIB)
