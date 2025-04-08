@@ -99,7 +99,7 @@ def list_files(startpath):
 
 ##################################################################################################
 
-#GIVEN AN AIDGE MODEL, ENSURE THAT ALL THE NODES 
+#GIVEN AN AIDGE MODEL, ENSURE THAT ALL THE NODE NAMES ARE IDENTIFIERS 
 def fix_names_as_identifiers(model):
     for i, node in enumerate(model.get_nodes()):
         name = node.name()
